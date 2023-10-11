@@ -319,20 +319,13 @@ def main():
     if args.model == 'MetaSelf':
         model = Metattack(model=surrogate, nnodes=adj.shape[0], feature_shape=features.shape, attack_structure=True,
                           attack_features=False, device=device, lambda_=0)
-    if args.model == 'GraD':
-        model = GraD(model=surrogate, nnodes=adj.shape[0], feature_shape=features.shape, attack_structure=True,
-                     attack_features=False, device=device, lambda_=0)
+    
 
     if args.model == 'CostAware':
         model = CostAware(model=surrogate, nnodes=adj.shape[0], feature_shape=features.shape, attack_structure=True,
                           attack_features=False, device=device, lambda_=0, weight1=args.weight1, weight2=args.weight2,
                           sigma1=args.sigma1, sigma2=args.sigma2)
-    if args.model == 'Sigmoid':
-        model = Tanh(model=surrogate, nnodes=adj.shape[0], feature_shape=features.shape, attack_structure=True,
-                     attack_features=False, device=device, lambda_=0)
-    if args.model == 'Tanh':
-        model = Tanh(model=surrogate, nnodes=adj.shape[0], feature_shape=features.shape, attack_structure=True,
-                     attack_features=False, device=device, lambda_=0)
+   
 
     model = model.to(device)
     start_time = time.time()
@@ -389,59 +382,19 @@ def main():
                                                 np.std(acc_total0, ddof=1) / np.sqrt(len(acc_total0)))
         interval3, interval4 = stats.t.interval(0.95, 9, accuracy2,
                                                 np.std(acc_total1, ddof=1) / np.sqrt(len(acc_total1)))
-        print("confidence of clean adj: %.4f"% ((interval2 - interval1) / 2))
-        print("confidence: %.4f"% ((interval4 - interval3) / 2))
+
         print("Mean Accuracy of clean:%.4f" % np.mean(acc_total0))
         print("standard Deviation of clean:%.4f" % np.std(acc_total0, ddof=1))
         print("Mean Accuracy:%.4f" % np.mean(acc_total1))
-        with open('{}_{}_{}.csv'.format(args.dataset,args.ptb_rate,args.attack_type), 'a+', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow([args.number])
-            writer.writerow([accuracy2])
+    
         print("standard Deviation:%.4f" % np.std(acc_total1, ddof=1))
         logging.basicConfig(filename=os.path.join('exper_log/log','{}_{}_{}_{}.log'.format(args.attack_type,args.dataset, args.ptb_rate,gnn)), level=logging.INFO)
 
-        logging.info("confidence of clean adj: %.4f "%((interval2 - interval1) / 2))
-        logging.info("confidence: %.4f"%((interval4 - interval3) / 2))
         logging.info("Mean Accuracy of clean: %.4f"% np.mean(acc_total0))
         logging.info("standard Deviation of clean: %.4f"% np.std(acc_total0, ddof=1))
         logging.info("Mean Accuracy: %.4f"% np.mean(acc_total1))
         logging.info("standard Deviation:%.4f" % np.std(acc_total1, ddof=1))
-        parameter_titles = ['number', 'Mean Accuracy of clean', 'std', 'Mean Accuracy', 'std', 'Mean GAP pf clean positive',
-                            'std',
-                            'Mean GAP pf clean negative', 'std', 'Mean GAP pf perturbed positive', 'std',
-                            'Mean GAP pf perturbed negative', 'std']
-        parameter_values = [args.number, np.mean(acc_total0), (interval2 - interval1) / 2, np.mean(acc_total1),
-                            (interval4 - interval3) / 2, np.mean(GAP1), np.std(GAP1, ddof=1), np.mean(GAP2),
-                            np.std(GAP2, ddof=1), np.mean(GAP3), np.std(GAP3, ddof=1), np.mean(GAP4), np.std(GAP4, ddof=1)]
-        with open('exper_log/accuracy1.csv', 'a+', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(['metattack'])
-            writer.writerow(parameter_titles)
-
-            # 继续写入数据行
-            writer.writerow(parameter_values)
-        parameter_titles1 = ['number', 'p1', 'p2', 'p3', 'p4', 'p5', 'n1', 'n2', 'n3', 'n4', 'n5']
-        parameter_values1 = [args.number, int(np.mean(account_total1)), int(np.mean(account_total2)),
-                             int(np.mean(account_total3)),
-                             int(np.mean(account_total4)),
-                             int(np.mean(account_total5)), int(np.mean(account_total6)), int(np.mean(account_total7)),
-                             int(np.mean(account_total8)),
-                             int(np.mean(account_total9)), int(np.mean(account_total10))]
-        parameter_values2 = [args.number, int(np.mean(account_total11)), int(np.mean(account_total12)),
-                             int(np.mean(account_total13)),
-                             int(np.mean(account_total14)),
-                             int(np.mean(account_total15)), int(np.mean(account_total16)), int(np.mean(account_total17)),
-                             int(np.mean(account_total18)),
-                             int(np.mean(account_total19)), int(np.mean(account_total20))]
-        with open('exper_log/accuracy1_1.csv', 'a+', newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(['metattack'])
-            writer.writerow(parameter_titles1)
-
-            # 继续写入数据行
-            writer.writerow(parameter_values1)
-            writer.writerow(parameter_values2)
+       
         print("Mean GAP1:%.4f" % np.mean(GAP1))
         print("standard Deviation:%.4f" % np.std(GAP1, ddof=1))
         print("Mean GAP2:%.4f" % np.mean(GAP2))
