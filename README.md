@@ -7,5 +7,5 @@ The code is based on the **deeprobust** (https://deeprobust.readthedocs.io/en/la
 To reproduce the attack performance:
     Run ```Test_attack.py``` to generate the attacked graph and test the attack perforamnce.
 
-Please find our paper at paper.pdf
+Please find our paper at cost_aware_full.pdf
 
